@@ -105,8 +105,9 @@ q-wash-display/
 - [x] **C — Wire to real `q-wash-api`**: built `PLAN_WEB_APPS.md` phase 8
       (`GET /washing-points/{id}/board`) in the same pass — see
       `../q-wash-api/PROGRESS.md`. Polling, not SSE (below).
-- [ ] **D — SSE upgrade**: not built. Polling ships first per this doc's
-      own "Live updates" decision — not required for v1.
+- [x] **D — SSE upgrade**: built 2026-08-31, alongside as a fast path over
+      the existing polling (kept as fallback, not replaced) — see
+      `PROGRESS.md`.
 - [x] **E — Resilience pass**: done, and more thoroughly than originally
       scoped — four real bugs were found by actually killing the API
       server mid-session and watching what happened, not by reasoning

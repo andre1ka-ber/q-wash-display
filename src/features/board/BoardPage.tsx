@@ -5,6 +5,7 @@ import { Header } from '../../shared/layout/Header';
 import { useClock } from '../../shared/useClock';
 import { useMyWashingPointId } from '../../shared/useMyWashingPoint';
 import { BoardCard } from './BoardCard';
+import { useBoardEvents } from './useBoardEvents';
 
 // Mirrors q-wash-worker's own cadence (see its PLAN.md) — a lobby TV isn't
 // noticeably laggy at 8s, and this is the one screen where *other*
@@ -70,6 +71,8 @@ export function BoardPage() {
     // to get stuck waiting on — the next tick 8s later just tries again.
     retry: 0,
   });
+
+  useBoardEvents(washingPointId);
 
   // This screen runs unattended, potentially for days (PLAN.md's
   // "Resilience" decision) — nothing else in this codebase auto-recovers

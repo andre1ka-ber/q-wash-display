@@ -5,7 +5,7 @@ See `PLAN.md` for the full plan and build order.
 - [x] Phase A — Scaffold
 - [x] Phase B — Screen against mock data (skipped as a separate step — see log)
 - [x] Phase C — Wire to real q-wash-api
-- [ ] Phase D — SSE upgrade (not built — polling ships first, per this app's own "Live updates" decision)
+- [x] Phase D — SSE upgrade (resumed 2026-08-31, see log below)
 - [x] Phase E — Resilience pass
 
 ## Log
@@ -185,3 +185,37 @@ See `PLAN.md` for the full plan and build order.
   session's length) — the fixes above address the *specific* failure
   modes actually found, not a guarantee against everything a real week
   of uptime could surface.
+
+- 2026-08-31 — **Phase D resumed and built**: `GET
+  /washing-points/{id}/board/events` (new `q-wash-api` endpoint, see its
+  own `PROGRESS.md`) wired in via a new `useBoardEvents` hook
+  (`src/features/board/useBoardEvents.ts`) that subscribes through
+  `q-wash-shared`'s new `subscribeToBoardEvents` and writes each pushed
+  frame straight into the existing `['display', 'board', washingPointId]`
+  react-query cache entry with `setQueryData`. The existing
+  `refetchInterval` polling in `BoardPage.tsx` was left completely
+  untouched, on purpose — SSE is the fast path, polling stays the
+  fallback, per this app's own Phase E precedent against trusting a
+  single channel for a screen that runs unattended for potentially days.
+
+  **Live verification** against a real running `q-wash-api` (staff login,
+  `npm run dev` here): confirmed the stream actually connects
+  (`GET .../board/events` returns 200 and stays open in the network
+  panel, not just polling); closed a box via a real `PATCH` from a second
+  terminal session (not through this UI) and watched the card flip to
+  "Закрыт" essentially instantly, well inside the 8s poll interval;
+  reopened it the same way. Then repeated this session's own
+  resilience-testing method from Phase E: killed the `q-wash-api` process
+  mid-session, confirmed the existing "Переподключение…" banner still
+  appears (polling's own error handling, unaffected by this change),
+  restarted the API, and confirmed both channels recovered on their
+  own — polling resumed on its next tick, and the SSE stream reconnected
+  a few attempts later once the backoff coincided with the server being
+  back (`q-wash-shared`'s new client backs off 1s→2s→4s→…→30s-capped
+  instead of a bounded retry count, since there's no equivalent "give up"
+  state for a stream whose whole job is being a nice-to-have fast path
+  over an already-resilient poll). Cleaned up the test box state
+  afterward via the real API, not raw SQL.
+
+  `tsc -b`, `oxlint`, `vite build` all clean. No console errors at any
+  point in this pass.
