@@ -137,6 +137,49 @@ See `PLAN.md` for the full plan and build order.
      watched the banner clear on its own within one poll interval — no
      page reload, no manual intervention, at any point.
 
+- 2026-08-31 — **First test infra in this app** (part of a platform-wide
+  push to add missing test coverage — this repo had none). Added Vitest
+  4.1.11 + `@testing-library/react` 16.3.3 + `jsdom` 30.0.1 +
+  `@testing-library/jest-dom` 7.0.1 as devDeps (compatible with Vite 8 per
+  `npm view`), `vitest.config.ts` (jsdom env), `vitest.setup.ts`
+  (`@testing-library/jest-dom/vitest` matchers + an explicit
+  `afterEach(cleanup)` — RTL's own auto-cleanup registration didn't fire
+  with `globals: false`, found by a first failing run with "multiple
+  elements found" errors), `npm test` script. Added `@testing-library/
+  jest-dom` to `tsconfig.app.json`'s `types` (needed for `tsc -b` to
+  recognize `toBeInTheDocument()` etc.).
+
+  Wrote `BoardCard.test.tsx` — exhaustive over the 4 real badge states
+  (`box.current` × `paused_at` × `is_open`, not a literal status enum —
+  `badgeFor` derives the label from those fields, not from a field on the
+  type itself), plus `elapsedMs`/`durationMs`/`formatElapsed` edge cases
+  (mid-wash, early-arrival clamped-to-zero, paused anchoring) and the
+  `identity()` car-name fallback. Two of the no-`current` cases
+  (Закрыт/Свободен) render the same label twice — once in the badge, once
+  in the fallback body text — `getAllByText(...).toHaveLength(2)` instead
+  of `getByText`, found by the tool's own "multiple elements found" error
+  rather than reasoning it out in advance.
+
+  Wrote `useBoardEvents.test.tsx` — mocks `q-wash-shared`'s
+  `subscribeToBoardEvents` (the true external from this hook's point of
+  view; the hook itself is the unit under test, not mocked) to assert the
+  pushed board lands in the exact react-query cache key `BoardPage.tsx`
+  polls, and that `unsubscribe` fires on unmount. Hit a real footgun
+  writing this one: the mock's `unsubscribe` `vi.fn()` was declared at
+  module scope and RTL's `cleanup()` auto-unmounts *every* hook render
+  left over from a prior test, so test 2's assertion saw a stale call
+  count from test 1's implicit teardown — fixed with
+  `beforeEach(() => unsubscribe.mockClear())`.
+
+  Sanity-checked the tests aren't tautological by deliberately breaking
+  `badgeFor`'s "Пауза" label mid-session and confirming the corresponding
+  test — and only that one — failed, then reverting.
+
+  `npm test` (11/11 pass), `npm run lint` (oxlint, clean), `npx tsc -b`
+  (clean) all pass. Did not touch `BoardPage.tsx` (polling+SSE
+  integration) or `Header.tsx`/`LoginPage.tsx` — out of scope per this
+  task's plan, lower logic density than the two files above.
+
   5. **`q-wash-shared`'s `authStore.restore()` treated a plain network
      failure identically to a real logged-out state** — found because
      fix #3/#4's testing included a full page reload while the server was
