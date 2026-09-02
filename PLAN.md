@@ -58,6 +58,9 @@ other customers.
   decision). Ship on polling first (matching `pegasus-board`'s existing
   8-second interval) so the app isn't blocked waiting on the SSE variant
   specifically, and upgrade the transport later without changing the UI.
+  **Update 2026-08-31**: the SSE variant shipped (Phase D, below) — both
+  channels now run at once, SSE as a fast path over polling, which stays
+  as the resilient fallback rather than being replaced.
 
 ## App architecture
 
@@ -84,9 +87,13 @@ q-wash-display/
 - **Routing**: none needed beyond the auth gate — single screen once
   logged in.
 - **Data/server-state**: `@tanstack/react-query` with `refetchInterval`
-  (polling phase) or a subscription hook in `q-wash-shared/sse` (once SSE
-  ships) — both read the same normalized board shape so swapping the
-  transport doesn't touch the rendering components.
+  polling (`refetchIntervalInBackground: true`, `retry: 0`,
+  `networkMode: 'always'` — see Phase E) as the resilient baseline, plus
+  a `useBoardEvents` hook (`src/features/board/useBoardEvents.ts`,
+  shipped in Phase D) that subscribes via `q-wash-shared`'s SSE client
+  and writes pushed frames into the same react-query cache entry the
+  polling reads/writes — both channels run concurrently against the same
+  cache key, not a transport swap.
 - **Resilience**: this runs unattended, potentially for days — needs to
   survive a token refresh cycle and a transient network blip without
   crashing to a white screen; a full-page error state with an auto-retry,
