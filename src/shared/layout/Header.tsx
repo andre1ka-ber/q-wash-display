@@ -1,4 +1,4 @@
-import { authStore, color, font, radius, StatusPill } from 'q-wash-shared';
+import { authStore, color, font, radius, StatusPill, LogoMark } from 'q-wash-shared';
 import { useClock, formatClock, formatDayLabel } from '../useClock';
 import { useMyWashingPoint } from '../useMyWashingPoint';
 
@@ -26,23 +26,7 @@ export function Header({ boxesActive, boxesTotal }: HeaderProps) {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 18, minWidth: 0 }}>
-        <div
-          style={{
-            width: 54,
-            height: 54,
-            flex: '0 0 auto',
-            borderRadius: 14,
-            border: '1px solid rgba(217,178,106,.4)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontFamily: font.display,
-            color: color.gold,
-            fontSize: 24,
-          }}
-        >
-          Q
-        </div>
+        <LogoMark size={54} />
         <div style={{ minWidth: 0 }}>
           <div
             style={{
