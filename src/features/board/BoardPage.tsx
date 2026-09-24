@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { authStore, color, font, ApiError, getDisplayBoard, type DisplayBoardWaitingItem } from 'q-wash-shared';
+import { authStore, color, font, ApiError, getDisplayBoard, useIsMobile, type DisplayBoardWaitingItem } from 'q-wash-shared';
 import { Header } from '../../shared/layout/Header';
 import { useClock } from '../../shared/useClock';
 import { useMyWashingPointId } from '../../shared/useMyWashingPoint';
@@ -33,6 +33,7 @@ function relativeNote(item: DisplayBoardWaitingItem, isFirst: boolean, now: numb
 export function BoardPage() {
   const washingPointId = useMyWashingPointId();
   const now = useClock();
+  const isMobile = useIsMobile();
 
   const boardQuery = useQuery({
     queryKey: ['display', 'board', washingPointId],
@@ -112,7 +113,7 @@ export function BoardPage() {
       {isReconnecting && (
         <div
           style={{
-            padding: '10px 44px',
+            padding: isMobile ? '10px 18px' : '10px 44px',
             background: 'rgba(217,178,106,.12)',
             borderBottom: '1px solid rgba(217,178,106,.4)',
             color: color.warn,
@@ -123,14 +124,23 @@ export function BoardPage() {
         </div>
       )}
 
-      <div style={{ flex: 1, padding: '32px 44px', display: 'flex', gap: 36, alignItems: 'flex-start' }}>
+      <div
+        style={{
+          flex: 1,
+          padding: isMobile ? '18px' : '32px 44px',
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: isMobile ? 24 : 36,
+          alignItems: isMobile ? 'stretch' : 'flex-start',
+        }}
+      >
         {initialError ? (
           <div style={{ color: color.bad, fontSize: 16 }}>Не удалось загрузить данные мойки. Переподключение…</div>
         ) : !hadData ? (
           <div style={{ color: color.textFaint, fontSize: 16 }}>Загрузка…</div>
         ) : (
           <>
-            <div style={{ flex: '1 1 60%', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div style={{ flex: isMobile ? '1 1 auto' : '1 1 60%', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
               <div style={{ fontFamily: font.display, color: color.textPrimary, fontSize: 22 }}>
                 Сейчас обслуживается
               </div>
@@ -141,7 +151,7 @@ export function BoardPage() {
               </div>
             </div>
 
-            <div style={{ flex: '1 1 40%', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div style={{ flex: isMobile ? '1 1 auto' : '1 1 40%', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
               <div style={{ fontFamily: font.display, color: color.textPrimary, fontSize: 22 }}>Ожидают</div>
               <div
                 style={{

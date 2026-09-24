@@ -272,3 +272,27 @@ See `PLAN.md` for the full plan and build order.
   Google Fonts `<link>`s + an inline-SVG favicon (same logo mark) to
   `index.html` — self-hosted Manrope/Prata dropped in favor of the CDN.
   `npm run build` and `npm test` both clean.
+
+- 2026-09-24 — **Mobile view** (part of a platform-wide pass across all
+  four web apps — see the umbrella `plan.md`/`progress.md` at the
+  platform root). `BoardPage.tsx` now reads `q-wash-shared`'s new
+  `useIsMobile(768)` and stacks the two-column layout (now-serving 60% +
+  waiting 40%) to a single column below that width, with tighter page
+  padding/gaps — same `BoardCard.tsx`, same waiting-row markup, same
+  `getDisplayBoard`/`useBoardEvents` data layer, untouched. Desktop is
+  unchanged byte-for-byte when `useIsMobile()` is false. Confirmed with
+  the user beforehand: this mobile view stays on the same authenticated
+  kiosk session as desktop — no new unauthenticated QR-scan read path
+  (consistent with the 2026-08-20 decision above to drop the
+  unauthenticated `?token=` scheme in the first place). `Header.tsx` left
+  untouched — its existing `flexWrap:'wrap'` already keeps it from
+  breaking at phone widths, just wrapping to two rows.
+
+  Also fixed `vitest.config.ts` missing `resolve.dedupe: ['react',
+  'react-dom']` (present in `vite.config.ts` but not here — the same
+  dual-React-copy class of bug the other three web apps hit this pass,
+  each independently, this session) and added a `window.matchMedia`
+  jsdom polyfill to `vitest.setup.ts` (defaults to non-matching/desktop).
+
+  `tsc -b`, `oxlint`, `npm run build`, `npx vitest run` (11/11) all
+  clean.
