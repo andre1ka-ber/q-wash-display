@@ -296,3 +296,10 @@ See `PLAN.md` for the full plan and build order.
 
   `tsc -b`, `oxlint`, `npm run build`, `npx vitest run` (11/11) all
   clean.
+
+- 2026-09-25 (same day) — Restyled scrollbars (`index.css`): thin (10px),
+  transparent track, rounded dark thumb (`#33322C`, `#4E4E47` on hover)
+  instead of the browser default, applied globally (`*`). Same change made
+  identically across all four web apps (`q-wash-admin`, `q-wash-cabinet`,
+  `q-wash-worker`, `q-wash-display`) for a consistent look. `npx vitest
+  run` still 11/11 (CSS-only change).
