@@ -319,3 +319,5 @@ See `PLAN.md` for the full plan and build order.
   immediately. `npx tsc --noEmit`, `npx vitest run` (11/11) clean. Not
   separately browser-tested in this app (identical pattern verified live
   in `q-wash-admin`/`q-wash-cabinet` — see their own `PROGRESS.md`).
+
+- 2026-09-26 — Test review: added `BoardPage.test.tsx` (boxes/counter/waiting list, next + relative times, empty/loading/first-load error, stale-data banner, SSE push applied, dead-session re-check) and `LoginPage.test.tsx` — 19 tests total.
