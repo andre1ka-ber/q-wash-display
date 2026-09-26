@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { authStore, color, font, radius, StatusPill, LogoMark, ConfirmDialog } from 'q-wash-shared';
+import { authStore, color, font, radius, StatusPill, ConfirmDialog } from 'q-wash-shared';
 import { useClock, formatClock, formatDayLabel } from '../useClock';
 import { useMyWashingPoint } from '../useMyWashingPoint';
 
@@ -29,7 +29,6 @@ export function Header({ boxesActive, boxesTotal }: HeaderProps) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 18, minWidth: 0 }}>
-          <LogoMark size={54} />
           <div style={{ minWidth: 0 }}>
             <div
               style={{
