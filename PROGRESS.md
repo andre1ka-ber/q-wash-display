@@ -321,3 +321,23 @@ See `PLAN.md` for the full plan and build order.
   in `q-wash-admin`/`q-wash-cabinet` — see their own `PROGRESS.md`).
 
 - 2026-09-26 — Test review: added `BoardPage.test.tsx` (boxes/counter/waiting list, next + relative times, empty/loading/first-load error, stale-data banner, SSE push applied, dead-session re-check) and `LoginPage.test.tsx` — 19 tests total.
+
+- 2026-09-28 — **Sentry error monitoring** (see platform-level `plan-sentry.md`).
+  Same wiring as the other three web apps: `src/main.tsx` calls `initSentry`
+  (from `q-wash-shared`) only when `import.meta.env.PROD`, `<App />` wrapped
+  in its `ErrorBoundary`. `VITE_SENTRY_DSN` added to `vite-env.d.ts`'s
+  `ImportMetaEnv`. No `.env.example` in this app (same as `q-wash-cabinet`/
+  `q-wash-worker`) — `VITE_SENTRY_DSN` gets set the same way
+  `VITE_API_BASE_URL` already is for deploy; didn't touch CI config.
+
+  Unlike the other three, this screen runs **unattended** (a TV-style kiosk
+  board — see this file's own resilience entries above and
+  `q-wash-shared/PROGRESS.md`'s `authStore.restore()` note), so Sentry's
+  default `ErrorBoundary` fallback (a static "something went wrong" panel
+  with no auto-recovery) would leave a dead screen with nobody there to
+  reload it. Passed a custom `fallback` instead
+  (`UnattendedReloadFallback`): renders nothing and calls
+  `window.location.reload()` after a 10s delay, so a render error the
+  boundary catches self-heals the same way this app already treats any
+  other failure mode. No DSN yet — no-op until one exists. `npx tsc
+  --noEmit`, `npx vite build`, `npx vitest run` (23/23) all clean.
