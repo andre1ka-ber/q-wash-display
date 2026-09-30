@@ -341,3 +341,23 @@ See `PLAN.md` for the full plan and build order.
   boundary catches self-heals the same way this app already treats any
   other failure mode. No DSN yet — no-op until one exists. `npx tsc
   --noEmit`, `npx vite build`, `npx vitest run` (23/23) all clean.
+
+- 2026-09-30 — **Installable PWA**: new dependency `vite-plugin-pwa`
+  (`npm audit fix` cleared the one unrelated transitive `undici`
+  advisory). Real icons (192/512 `any`, 512 `maskable`, 180 apple-touch)
+  generated pixel-faithful to the app's existing favicon mark, in new
+  `public/`. `vite.config.ts`: `VitePWA({ registerType: 'autoUpdate',
+  manifest: {...} })` — no `runtimeCaching` entries, confirmed by reading
+  the built `dist/sw.js` (exactly one `registerRoute` call, Workbox's own
+  navigation-shell fallback, nothing touching `/api/*` or the SSE
+  stream). Deliberately installable-only, not offline: this screen runs
+  unattended for potentially days (see `PLAN.md`'s "Resilience" section
+  and the `UnattendedReloadFallback` above) and must never show stale
+  cached queue data with nobody there to notice. `registerType:
+  'autoUpdate'` means a new deploy takes over in the background on this
+  kiosk's own next reload cycle — no "update available" prompt that
+  needs a human to click it. `index.html` gained an `apple-touch-icon`
+  link + a `theme-color` meta. Verified via `vite build && vite preview`
+  + Playwright: manifest fetches valid with the right icons/`lang`,
+  service worker registers, no console errors. `npx tsc --noEmit` and
+  `npx vitest run` (23/23) unaffected.
