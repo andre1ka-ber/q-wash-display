@@ -7,11 +7,13 @@ import { BoardPage } from './BoardPage';
 const getDisplayBoard = vi.fn();
 const restore = vi.fn();
 let pushBoard: ((board: DisplayBoard) => void) | null = null;
+let mobile = false;
 
 vi.mock('q-wash-shared', async (importOriginal) => {
   const actual = await importOriginal<typeof import('q-wash-shared')>();
   return {
     ...actual,
+    useIsMobile: () => mobile,
     authStore: { ...actual.authStore, restore: (...a: unknown[]) => restore(...a) },
     useAuth: () => ({ status: 'authenticated', user: fakeUser }),
     getWashingPoint: () => Promise.resolve({ id: 'wp-1', name: 'Pegasus', address: 'ул. Рудаки, 84' }),
@@ -59,6 +61,7 @@ function renderPage() {
 }
 
 beforeEach(() => {
+  mobile = false;
   getDisplayBoard.mockResolvedValue(board());
 });
 afterEach(() => {
@@ -83,6 +86,27 @@ describe('BoardPage', () => {
     await screen.findByText(/Lada/);
     expect(screen.getByText('Следующий')).toBeInTheDocument();
     expect(screen.getByText(/через 4[4-5] мин/)).toBeInTheDocument();
+  });
+
+  it('mobile: shows now-serving cards, the waiting list and the average wait', async () => {
+    mobile = true;
+    renderPage();
+    expect(await screen.findByText('Сейчас обслуживается')).toBeInTheDocument();
+    expect(screen.getByText('Q Wash · табло')).toBeInTheDocument();
+    expect(screen.getByText('БОКС 1')).toBeInTheDocument();
+    expect(screen.getByText('••1111')).toBeInTheDocument(); // washing booking's identifier
+    expect(screen.getByText('••2222')).toBeInTheDocument();
+    expect(screen.getByText('следующий')).toBeInTheDocument();
+    expect(screen.getByText('Среднее ожидание')).toBeInTheDocument();
+    expect(screen.getByText('24 мин')).toBeInTheDocument(); // (3 + 45) / 2
+  });
+
+  it('mobile: hides the average wait when nobody is waiting', async () => {
+    mobile = true;
+    getDisplayBoard.mockResolvedValue(board({ waiting: [] }));
+    renderPage();
+    expect(await screen.findByText('Очередь пуста')).toBeInTheDocument();
+    expect(screen.queryByText('Среднее ожидание')).not.toBeInTheDocument();
   });
 
   it('says so when nobody is waiting', async () => {

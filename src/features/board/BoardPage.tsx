@@ -5,6 +5,7 @@ import { Header } from '../../shared/layout/Header';
 import { useClock } from '../../shared/useClock';
 import { useMyWashingPointId } from '../../shared/useMyWashingPoint';
 import { BoardCard } from './BoardCard';
+import { MobileBoard } from './MobileBoard';
 import { useBoardEvents } from './useBoardEvents';
 
 // Mirrors q-wash-worker's own cadence (see its PLAN.md) — a lobby TV isn't
@@ -107,7 +108,16 @@ export function BoardPage() {
   const initialError = !hadData && isDisconnected;
 
   return (
-    <div style={{ minHeight: '100vh', background: color.surface, display: 'flex', flexDirection: 'column' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: isMobile
+          ? `radial-gradient(500px 380px at 50% -10%, ${color.borderAlt} 0%, ${color.surfaceAlt} 70%)`
+          : color.surface,
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <Header boxesActive={board?.boxes_active ?? 0} boxesTotal={board?.boxes_total ?? 0} />
 
       {isReconnecting && (
@@ -138,6 +148,10 @@ export function BoardPage() {
           <div style={{ color: color.bad, fontSize: 16 }}>Не удалось загрузить данные мойки. Переподключение…</div>
         ) : !hadData ? (
           <div style={{ color: color.textFaint, fontSize: 16 }}>Загрузка…</div>
+        ) : isMobile && board ? (
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <MobileBoard board={board} now={now.getTime()} />
+          </div>
         ) : (
           <>
             <div style={{ flex: isMobile ? '1 1 auto' : '1 1 60%', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>

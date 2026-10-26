@@ -361,3 +361,10 @@ See `PLAN.md` for the full plan and build order.
   + Playwright: manifest fetches valid with the right icons/`lang`,
   service worker registers, no console errors. `npx tsc --noEmit` and
   `npx vitest run` (23/23) unaffected.
+- 2026-10-26 — Mobile restyle from "Car Wash Web Apps Mobile": compact
+  header (point, "Q WASH · ТАБЛО", clock), 2-column "Сейчас обслуживается"
+  cards with a big identifier and a minutes-left bar, "Ожидают" rows, and a
+  "Среднее ожидание" footer (average minutes until the waiting bookings'
+  start; hidden when nobody waits). The board has no ticket codes, so the
+  last four phone digits (``••1234``) stand in as the identifier, as on the
+  desktop screen. `tsc -b`, `oxlint`, `vitest run` (25/25) clean.
