@@ -17,6 +17,11 @@ export default defineConfig({
     // prompt.
     VitePWA({
       registerType: 'autoUpdate',
+      // Registered from main.tsx (startPwaUpdates) so the page reloads on an
+      // update and re-checks periodically; the plugin only forces
+      // skipWaiting/clientsClaim for its own injected script, so set them here.
+      injectRegister: false,
+      workbox: { skipWaiting: true, clientsClaim: true },
       manifest: {
         lang: 'ru',
         name: 'Q Wash — Экран очереди',

@@ -368,3 +368,10 @@ See `PLAN.md` for the full plan and build order.
   start; hidden when nobody waits). The board has no ticket codes, so the
   last four phone digits (``••1234``) stand in as the identifier, as on the
   desktop screen. `tsc -b`, `oxlint`, `vitest run` (25/25) clean.
+- 2026-10-26 — PWA updates: the service worker is now registered from
+  `main.tsx` via `startPwaUpdates` (q-wash-shared) instead of the plugin's
+  injected script (`injectRegister: false`, `skipWaiting`/`clientsClaim` set
+  explicitly). The page reloads when a new version takes over, and re-checks
+  hourly and on return to the app — so the unattended board now picks up a
+  deploy on its own instead of waiting for a manual reload. `vite build`
+  verified.
