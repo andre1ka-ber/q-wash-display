@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { authStore, color, font, ApiError, getDisplayBoard, useIsMobile, type DisplayBoardWaitingItem } from 'q-wash-shared';
+import { authStore, color, ApiError, getDisplayBoard, useIsMobile, type DisplayBoardWaitingItem } from 'q-wash-shared';
 import { Header } from '../../shared/layout/Header';
 import { useClock } from '../../shared/useClock';
 import { useMyWashingPointId } from '../../shared/useMyWashingPoint';
@@ -113,7 +113,7 @@ export function BoardPage() {
         minHeight: '100vh',
         background: isMobile
           ? `radial-gradient(500px 380px at 50% -10%, ${color.borderAlt} 0%, ${color.surfaceAlt} 70%)`
-          : color.surface,
+          : 'radial-gradient(900px 500px at 50% -20%, #211b21 0%, #0e0c0e 65%)',
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -137,10 +137,10 @@ export function BoardPage() {
       <div
         style={{
           flex: 1,
-          padding: isMobile ? '18px' : '32px 44px',
+          padding: isMobile ? '18px' : '34px 46px 40px',
           display: 'flex',
           flexDirection: isMobile ? 'column' : 'row',
-          gap: isMobile ? 24 : 36,
+          gap: isMobile ? 24 : 34,
           alignItems: isMobile ? 'stretch' : 'flex-start',
         }}
       >
@@ -154,37 +154,31 @@ export function BoardPage() {
           </div>
         ) : (
           <>
-            <div style={{ flex: isMobile ? '1 1 auto' : '1 1 60%', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <div style={{ fontFamily: font.display, color: color.textPrimary, fontSize: 22 }}>
+            <div style={{ flex: isMobile ? '1 1 auto' : '1.55 1 0', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 22 }}>
+              <div style={{ color: color.textTertiary, fontSize: 15, letterSpacing: '.22em', textTransform: 'uppercase' }}>
                 Сейчас обслуживается
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 22 }}>
                 {boxes.map((box) => (
                   <BoardCard key={box.number} box={box} now={now.getTime()} />
                 ))}
               </div>
             </div>
 
-            <div style={{ flex: isMobile ? '1 1 auto' : '1 1 40%', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <div style={{ fontFamily: font.display, color: color.textPrimary, fontSize: 22 }}>Ожидают</div>
-              <div
-                style={{
-                  borderRadius: 20,
-                  background: color.panel,
-                  border: `1px solid ${color.border}`,
-                  overflow: 'hidden',
-                }}
-              >
+            <div style={{ flex: isMobile ? '1 1 auto' : '1 1 0', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 22 }}>
+              <div style={{ color: color.textTertiary, fontSize: 15, letterSpacing: '.22em', textTransform: 'uppercase' }}>Ожидают</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {waiting.length === 0 ? (
-                  <div style={{ padding: 28, color: color.textFaint, fontSize: 16 }}>Очередь пуста</div>
+                  <div style={{ padding: 28, borderRadius: 18, background: color.panelAlt, border: '1px solid #232023', color: color.textFaint, fontSize: 16 }}>Очередь пуста</div>
                 ) : (
                   waiting.map((item, i) => (
                     <div
                       key={item.id}
                       style={{
-                        padding: '18px 24px',
-                        borderBottom: i === waiting.length - 1 ? 'none' : `1px solid ${color.borderAlt}`,
-                        background: i === 0 ? 'rgba(217,178,106,.08)' : 'transparent',
+                        padding: '16px 20px',
+                        borderRadius: 18,
+                        border: i === 0 ? '1px solid rgba(242,209,75,.34)' : '1px solid #232023',
+                        background: i === 0 ? 'rgba(242,209,75,.1)' : color.panelAlt,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
@@ -192,10 +186,10 @@ export function BoardPage() {
                       }}
                     >
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ color: color.textPrimaryAlt, fontSize: 17, fontWeight: 600 }}>
+                        <div style={{ color: color.textPrimaryAlt, fontSize: 19, fontWeight: 600 }}>
                           {identity(item)}
                         </div>
-                        <div style={{ color: color.textFaint, fontSize: 13 }}>
+                        <div style={{ color: color.textFaint, fontSize: 15 }}>
                           {item.service_name ?? 'Услуга'} · Бокс {item.box_number} ·{' '}
                           {timeFormatter.format(new Date(item.scheduled_start_at))}
                         </div>
@@ -203,7 +197,7 @@ export function BoardPage() {
                       <div
                         style={{
                           color: i === 0 ? color.gold : color.textFaint,
-                          fontSize: 13,
+                          fontSize: 14,
                           fontWeight: i === 0 ? 700 : 400,
                           whiteSpace: 'nowrap',
                         }}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { authStore, useIsMobile, color, font, radius, StatusPill, ConfirmDialog } from 'q-wash-shared';
-import { useClock, formatClock, formatDayLabel } from '../useClock';
+import { authStore, useIsMobile, color, font, radius, ConfirmDialog, LogoMark } from 'q-wash-shared';
+import { useClock, formatClock } from '../useClock';
 import { useMyWashingPoint } from '../useMyWashingPoint';
 
 export interface HeaderProps {
@@ -12,7 +12,6 @@ export function Header({ boxesActive, boxesTotal }: HeaderProps) {
   const now = useClock();
   const pointQuery = useMyWashingPoint();
   const pointName = pointQuery.data?.name ?? '…';
-  const pointAddress = pointQuery.data?.address ?? '';
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const isMobile = useIsMobile();
 
@@ -76,22 +75,25 @@ export function Header({ boxesActive, boxesTotal }: HeaderProps) {
     <>
       <div
         style={{
-          padding: '28px 44px',
+          height: 92,
+          flex: '0 0 92px',
+          padding: '0 46px',
           borderBottom: `1px solid ${color.borderAlt}`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: 28,
-          flexWrap: 'wrap',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 18, minWidth: 0 }}>
-          <div style={{ minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 0 }}>
+          <LogoMark size={46} />
+          <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
             <div
               style={{
-                fontFamily: font.display,
                 color: color.textPrimary,
                 fontSize: 26,
+                fontWeight: 600,
+                letterSpacing: '-.03em',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -99,34 +101,28 @@ export function Header({ boxesActive, boxesTotal }: HeaderProps) {
             >
               {pointName}
             </div>
-            <div style={{ color: color.textFaint, fontSize: 15 }}>{pointAddress}</div>
+            <div style={{ color: color.textTertiary, fontSize: 12, letterSpacing: '.22em', textTransform: 'uppercase' }}>
+              Q Wash
+            </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 28, flex: '0 0 auto' }}>
-          <StatusPill kind={boxesActive > 0 ? 'ok' : 'mute'}>
-            В работе {boxesActive} из {boxesTotal} боксов
-          </StatusPill>
-
+        <div style={{ display: 'flex', alignItems: 'center', gap: 34, flex: '0 0 auto' }}>
           <div
             style={{
-              textAlign: 'right',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              color: boxesActive > 0 ? color.ok : color.mute,
+              fontSize: 16,
+              fontWeight: 600,
             }}
           >
-            <div
-              style={{
-                fontFamily: font.display,
-                color: color.textPrimary,
-                fontSize: 34,
-                lineHeight: 1,
-              }}
-            >
-              {formatClock(now)}
-            </div>
-            <div style={{ color: color.textFaint, fontSize: 14, textTransform: 'capitalize', marginTop: 4 }}>
-              {formatDayLabel(now)}
-            </div>
+            <span style={{ animation: 'blink 2s infinite' }}>●</span>
+            <span>В работе {boxesActive} из {boxesTotal} боксов</span>
           </div>
+
+          <div style={{ fontFamily: font.display, color: color.textPrimary, fontSize: 34 }}>{formatClock(now)}</div>
 
           {/* Unobtrusive, kiosk-admin-only affordance — nobody working the
               floor is expected to click this; it's here for whoever swaps

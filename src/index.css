@@ -42,3 +42,14 @@ a:hover {
   background: #4E4E47;
   background-clip: padding-box;
 }
+
+@keyframes pulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(242, 209, 75, .35); }
+  70% { box-shadow: 0 0 0 22px rgba(242, 209, 75, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(242, 209, 75, 0); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .25; }
+}

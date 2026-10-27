@@ -53,9 +53,10 @@ export function BoardCard({ box, now }: BoardCardProps) {
   return (
     <div
       style={{
-        borderRadius: radius.xxxl,
-        background: color.panel,
-        border: `1px solid ${color.border}`,
+        borderRadius: 26,
+        background: color.panelAlt,
+        border: `1px solid ${current ? (current.paused_at ? 'rgba(242,209,75,.32)' : 'rgba(143,203,134,.3)') : color.border}`,
+        animation: current && !current.paused_at ? 'pulseRing 3.2s ease-out infinite' : undefined,
         padding: 28,
         display: 'flex',
         flexDirection: 'column',
@@ -64,7 +65,7 @@ export function BoardCard({ box, now }: BoardCardProps) {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ fontFamily: font.display, color: color.textPrimary, fontSize: 22 }}>
+        <div style={{ color: color.textSecondary, fontSize: 19, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase' }}>
           Бокс {box.number}
           {box.label ? ` · ${box.label}` : ''}
         </div>
@@ -73,9 +74,11 @@ export function BoardCard({ box, now }: BoardCardProps) {
 
       {current ? (
         <>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <div style={{ fontFamily: font.display, color: color.textPrimary, fontSize: 30 }}>{identity(current)}</div>
-            <div style={{ color: color.textMuted, fontSize: 16 }}>{current.service_name ?? 'Услуга'}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 8, margin: 'auto 0' }}>
+            <div style={{ fontFamily: font.display, color: color.gold, fontSize: 36, lineHeight: 1.15 }}>
+              {identity(current)}
+            </div>
+            <div style={{ color: color.textTertiary, fontSize: 16 }}>{current.service_name ?? 'Услуга'}</div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 'auto' }}>
@@ -97,11 +100,10 @@ export function BoardCard({ box, now }: BoardCardProps) {
           </div>
         </>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 'auto', marginBottom: 'auto' }}>
-          <div style={{ fontFamily: font.display, color: color.textFaint, fontSize: 22 }}>
-            {box.is_open ? 'Свободен' : 'Закрыт'}
-          </div>
-          {box.is_open && <div style={{ color: color.textFaint, fontSize: 15 }}>Подъезжайте без ожидания</div>}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 8, margin: 'auto 0' }}>
+          <div style={{ fontFamily: font.display, color: color.textDim, fontSize: 56, lineHeight: 1 }}>—</div>
+          <div style={{ color: color.textSecondary, fontSize: 19, fontWeight: 600 }}>{box.is_open ? 'Свободен' : 'Закрыт'}</div>
+          {box.is_open && <div style={{ color: color.textTertiary, fontSize: 16 }}>Подъезжайте без ожидания</div>}
         </div>
       )}
     </div>
