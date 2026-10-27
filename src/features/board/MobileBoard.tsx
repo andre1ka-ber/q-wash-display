@@ -24,14 +24,8 @@ function tag(last4: string): string {
   return `••${last4}`;
 }
 
-function NowCard({ box, now }: { box: DisplayBoardBox; now: number }) {
+function NowCard({ box }: { box: DisplayBoardBox }) {
   const current = box.current;
-  const startMs = current ? new Date(current.scheduled_start_at).getTime() : 0;
-  const totalMs = current ? new Date(current.scheduled_end_at).getTime() - startMs : 0;
-  const anchor = current?.paused_at ? new Date(current.paused_at).getTime() : now;
-  const elapsed = Math.max(0, anchor - startMs);
-  const leftMin = current ? Math.max(0, Math.round((totalMs - elapsed) / 60000)) : 0;
-  const pct = current && totalMs > 0 ? Math.min(100, (elapsed / totalMs) * 100) : 0;
   const dot = !current ? color.textDim : current.paused_at ? color.warn : color.ok;
 
   return (
@@ -75,15 +69,6 @@ function NowCard({ box, now }: { box: DisplayBoardBox; now: number }) {
       >
         {current ? (current.car_name ?? 'Авто') : box.is_open ? 'Свободен' : 'Закрыт'}
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', color: color.textTertiary, fontSize: 11 }}>
-          <span>{current ? 'осталось' : 'ожидание'}</span>
-          <span style={{ color: color.textPrimaryAlt, fontWeight: 700 }}>{current ? `${leftMin} мин` : '0 мин'}</span>
-        </div>
-        <div style={{ height: 5, borderRadius: 3, background: color.borderAlt, overflow: 'hidden' }}>
-          <div style={{ height: '100%', borderRadius: 3, background: color.gold, width: `${pct}%` }} />
-        </div>
-      </div>
     </div>
   );
 }
@@ -104,7 +89,7 @@ export function MobileBoard({ board, now }: MobileBoardProps) {
       <div style={sectionLabel}>Сейчас обслуживается</div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
         {board.boxes.map((box) => (
-          <NowCard key={box.number} box={box} now={now} />
+          <NowCard key={box.number} box={box} />
         ))}
       </div>
 

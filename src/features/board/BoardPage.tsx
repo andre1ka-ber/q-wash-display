@@ -160,7 +160,7 @@ export function BoardPage() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 22 }}>
                 {boxes.map((box) => (
-                  <BoardCard key={box.number} box={box} now={now.getTime()} />
+                  <BoardCard key={box.number} box={box} />
                 ))}
               </div>
             </div>
